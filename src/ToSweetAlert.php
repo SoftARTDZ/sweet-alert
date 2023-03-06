@@ -16,84 +16,30 @@ class ToSweetAlert
      */
     public function handle($request, Closure $next)
     {
-        if ($request->session()->has('success')) {
-            alert()->success(
-                is_array($request->session()->get('success'))
-                    ? $request->session()->get('success')[0] // if array is passed, put the 1st param as a title
-                    : $request->session()->get('success')    // else put the whole value as title
-            ,
-                is_array($request->session()->get('success'))
-                    ? $request->session()->get('success')[1] // if array is passed, put the 2st param as a description
-                    : null                                   // else put nothing as description
-            )->autoClose(
-                is_array($request->session()->get('success')) && isset($request->session()->get('success')[2])
-                    ? $request->session()->get('success')[2] // if array is passed, put the 3nd param as a auto_close_timer value
-                    : config('sweetalert.timer')             // else put the default auto_close_timer value
-            );
-        }
+        $messageTypes = [
+            'info',
+           'success',
+            'warning',
+            'error',
+            'question',
+        ];
 
-        if ($request->session()->has('info')) {
-            alert()->info(
-                is_array($request->session()->get('info'))
-                    ? $request->session()->get('info')[0]
-                    : $request->session()->get('info')
-            ,
-                is_array($request->session()->get('info'))
-                    ? $request->session()->get('info')[1]
-                    : null
-            )->autoClose(
-                is_array($request->session()->get('info')) && isset($request->session()->get('info')[2])
-                    ? $request->session()->get('info')[2]
-                    : config('sweetalert.timer')
-            );
-        }
-
-        if ($request->session()->has('warning')) {
-            alert()->warning(
-                is_array($request->session()->get('warning'))
-                    ? $request->session()->get('warning')[0]
-                    : $request->session()->get('warning')
-            ,
-                is_array($request->session()->get('warning'))
-                    ? $request->session()->get('warning')[1]
-                    : null
-            )->autoClose(
-                is_array($request->session()->get('warning')) && isset($request->session()->get('warning')[2])
-                    ? $request->session()->get('warning')[2]
-                    : config('sweetalert.timer')
-            );
-        }
-
-        if ($request->session()->has('question')) {
-            alert()->question(
-                is_array($request->session()->get('question'))
-                    ? $request->session()->get('question')[0]
-                    : $request->session()->get('question')
-            ,
-                is_array($request->session()->get('question'))
-                    ? $request->session()->get('question')[1]
-                    : null
-            )->autoClose(
-                is_array($request->session()->get('question')) && isset($request->session()->get('question')[2])
-                    ? $request->session()->get('question')[2]
-                    : config('sweetalert.timer')
-            );
-        }
-
-        if ($request->session()->has('error')) {
-            alert()->error(
-                is_array($request->session()->get('error'))
-                    ? $request->session()->get('error')[0]
-                    : $request->session()->get('error')
-            ,
-                is_array($request->session()->get('error'))
-                    ? $request->session()->get('error')[1]
-                    : null
-            )->autoClose(
-                is_array($request->session()->get('error')) && isset($request->session()->get('error')[2])
-                    ? $request->session()->get('error')[2]
-                    : config('sweetalert.timer')
-            );
+        foreach ($messageTypes as $message) {
+            if ($request->session()->has($message)) {
+                alert()->{$message}(
+                    is_array($request->session()->get($message))
+                        ? $request->session()->get($message)[0] // if array is passed, put the 1st param as a title
+                        : $request->session()->get($message)    // else put the whole value as title
+                ,
+                    is_array($request->session()->get($message))
+                        ? $request->session()->get($message)[1] // if array is passed, put the 2st param as a description
+                        : null                                   // else put nothing as description
+                )->autoClose(
+                    is_array($request->session()->get($message)) && isset($request->session()->get($message)[2])
+                        ? $request->session()->get($message)[2] // if array is passed, put the 3nd param as a auto_close_timer value
+                        : config('sweetalert.timer')             // else put the default auto_close_timer value
+                );
+            }
         }
 
         if ($request->session()->has('errors') && config('sweetalert.middleware.auto_display_error_messages')) {
